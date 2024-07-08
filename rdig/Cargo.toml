@@ -1,0 +1,9 @@
+[package]
+name = "rdig"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+base64ct = { version = "1.6.0", features = ["alloc"] }
+rdns-lib = { path = "../rdns-lib" }
+tracing-subscriber = "0.3.18"

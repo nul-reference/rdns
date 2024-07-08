@@ -1,0 +1,3 @@
+[workspace]
+members = ["rdns-lib", "rdig"]
+resolver = "2"
