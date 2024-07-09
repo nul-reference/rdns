@@ -7,23 +7,44 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2fbf32b9-9943-4905-9092-51d16933c0d0" name="Changes" comment="Initial Commit&#10;&#10;Mostly works in a way.&#10;&#10;Need to finish some parsing." />
+    <list default="true" id="2fbf32b9-9943-4905-9092-51d16933c0d0" name="Changes" comment="Start of refactor&#10;&#10;- Break up `header.rs` into smaller files.&#10;- Move header-related parsing into `header.rs`&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`.">
+      <change afterPath="$PROJECT_DIR$/rdns-lib/src/header/opcode.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rdns-lib/src/header/return_code.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rdns-lib/src/header.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/header.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rdns-lib/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rdns-lib/src/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/parser.rs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="zsa1rzs6" />
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "customColor": "",
   "associatedIndex": 2
 }]]></component>
   <component name="ProjectId" id="2iyIC1khdXumv2mD3Zr9p3cM80D" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -33,14 +54,14 @@
     "Cargo.Run rdig.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "refactor",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
     "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
     "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "language.rust.cargo.check"
+    "settings.editor.selected.configurable": "preferences.customizations"
   }
 }]]></component>
   <component name="RsExternalLinterProjectSettings">
@@ -85,6 +106,9 @@
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
   </component>
+  <component name="RustfmtProjectSettings">
+    <option name="useRustfmt" value="true" />
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -93,7 +117,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1720456260538</updated>
-      <workItem from="1720456262320" duration="5136000" />
+      <workItem from="1720456262320" duration="7243000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit&#10;&#10;Mostly works in a way.&#10;&#10;Need to finish some parsing.">
       <option name="closed" value="true" />
@@ -103,7 +127,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720463693491</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Initial Commit&#10;&#10;Mostly works in a way.&#10;&#10;Need to finish some parsing.">
+      <option name="closed" value="true" />
+      <created>1720463749617</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1720463749617</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -112,6 +144,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial Commit&#10;&#10;Mostly works in a way." />
     <MESSAGE value="Initial Commit&#10;&#10;Mostly works in a way.&#10;&#10;Need to finish some parsing." />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit&#10;&#10;Mostly works in a way.&#10;&#10;Need to finish some parsing." />
+    <MESSAGE value="Start of refactor&#10;&#10;- Break up `header.rs` into smaller files.&#10;- Move header-related parsing into `header.rs`&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`." />
+    <option name="LAST_COMMIT_MESSAGE" value="Start of refactor&#10;&#10;- Break up `header.rs` into smaller files.&#10;- Move header-related parsing into `header.rs`&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`." />
   </component>
 </project>

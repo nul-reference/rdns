@@ -1,5 +1,6 @@
 #![forbid(clippy::unwrap_used)]
 use std::fmt::Formatter;
+
 use crate::question::Question;
 use crate::resource_record::ResourceRecord;
 

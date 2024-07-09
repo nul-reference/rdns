@@ -2,50 +2,10 @@ use std::net::Ipv4Addr;
 
 use nom::IResult;
 
-use crate::{Class, Message, Type};
-use crate::header::{Header, Opcode, RCode};
+use crate::{Class, header, Message, Type};
 use crate::name::Name;
 use crate::question::Question;
 use crate::resource_record::ResourceRecord;
-
-type HeaderFlags<'p> = IResult<&'p [u8], (bool, u8, bool, bool, bool, bool, u8, u8)>;
-
-fn parse_header_flags(input: &[u8]) -> HeaderFlags<'_> {
-    use nom::bits::{
-        bits,
-        streaming::{bool, take},
-    };
-    use nom::sequence::tuple;
-
-    bits::<_, _, nom::error::Error<(&[u8], usize)>, _, _>(tuple((
-        bool,
-        take(4_usize),
-        bool,
-        bool,
-        bool,
-        bool,
-        take(3_usize),
-        take(4_usize),
-    )))(input)
-}
-
-#[tracing::instrument(skip_all)]
-fn header_parser(i: &[u8]) -> IResult<&[u8], Header> {
-    let (i, id) = nom::number::streaming::be_u16(i)?;
-
-    let (i, (qr, opcode, aa, tc, rd, ra, _zeros, rcode)) = parse_header_flags(i)?;
-    let opcode = Opcode::try_from(opcode).expect("Invalid opcode passed: {opcode:02X?}");
-    let rcode = RCode::try_from(rcode).expect("Invalid rcode: {rcode:02X?}");
-
-    Ok((i, Header::new(Some(id), qr, opcode, aa, tc, rd, ra, rcode)))
-}
-
-#[tracing::instrument(skip_all)]
-fn parse_domain_name_root(i: &[u8]) -> IResult<&[u8], String> {
-    nom::combinator::map(nom::bytes::streaming::tag([0x00_u8]), |_byte: &[u8]| {
-        "".to_string()
-    })(i)
-}
 
 #[tracing::instrument(skip_all)]
 fn parse_length_nonpointer(i: &[u8]) -> IResult<&[u8], (bool, usize)> {
@@ -91,7 +51,6 @@ fn parse_domain_name<'p>(
     packet: &'p [u8],
 ) -> impl Fn(&'p [u8]) -> IResult<&'p [u8], Vec<String>> + 'p {
     move |i: &[u8]| {
-        tracing::info!("Current parsing progress: {i:?}");
         let mut names: Vec<String> = Vec::new();
         let mut output_r = i;
         let mut gone_back: bool = false;
@@ -103,10 +62,11 @@ fn parse_domain_name<'p>(
                     .expect("Didn't get pointer or nonpointer match");
             step_r = r;
             if length_or_offset == 0 {
-                if !gone_back { output_r = &output_r[1..] };
+                if !gone_back {
+                    output_r = &output_r[1..]
+                };
                 break;
             } else if is_pointer {
-                tracing::info!("Parsing pointer with offset 0x{length_or_offset:04X}");
                 let new_start = &packet[length_or_offset..];
                 let (x, length) = nom::number::streaming::be_u8(new_start)?;
                 let (x, name) = parse_domain_name_text_with_length(length as usize)(x)
@@ -116,7 +76,6 @@ fn parse_domain_name<'p>(
                 gone_back = true;
                 step_r = x;
             } else {
-                tracing::info!("Parsing non-pointer with length 0x{length_or_offset}");
                 let (x, name) = parse_domain_name_text_with_length(length_or_offset)(step_r)
                     .expect("Couldn't parse without pointer");
                 names.push(name);
@@ -126,7 +85,6 @@ fn parse_domain_name<'p>(
                 step_r = x;
             }
         }
-
 
         Ok((output_r, names))
     }
@@ -200,7 +158,7 @@ fn parse_resource_record<'buf>(
 #[tracing::instrument(skip_all)]
 pub(crate) fn parse_message(message: &[u8]) -> IResult<&[u8], Message> {
     // Parse full header
-    let (remaining, header) = header_parser(message)?;
+    let (remaining, header) = header::header_parser(message)?;
     let (remaining, question_count) = nom::number::streaming::be_u16(remaining)?;
     let (remaining, answer_count) = nom::number::streaming::be_u16(remaining)?;
     let (remaining, nameserver_count) = nom::number::streaming::be_u16(remaining)?;
