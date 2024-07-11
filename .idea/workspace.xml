@@ -7,18 +7,8 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2fbf32b9-9943-4905-9092-51d16933c0d0" name="Changes" comment="Start of refactor&#10;&#10;- Break up `header.rs` into smaller files.&#10;- Move header-related parsing into `header.rs`&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`.">
-      <change afterPath="$PROJECT_DIR$/rdns-lib/src/error.rs" afterDir="false" />
+    <list default="true" id="2fbf32b9-9943-4905-9092-51d16933c0d0" name="Changes" comment="Refactoring part 2&#10;&#10;- Rename `Name` to `DomainName`.&#10;- Move DomainName related parsing to `domain_name.rs`.&#10;- Entirely rewrite domain name parsing.&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`.&#10;- Add tracing_subscriber to rdig&#10;-">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdig/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdig/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdns-lib/src/header.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/header.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdns-lib/src/header/opcode.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/header/opcode.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdns-lib/src/header/return_code.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/header/return_code.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdns-lib/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdns-lib/src/name.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/domain_name.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdns-lib/src/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/parser.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdns-lib/src/question.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/question.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rdns-lib/src/resource_record.rs" beforeDir="false" afterPath="$PROJECT_DIR$/rdns-lib/src/resource_record.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,7 +115,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1720456260538</updated>
-      <workItem from="1720456262320" duration="21727000" />
+      <workItem from="1720456262320" duration="22472000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit&#10;&#10;Mostly works in a way.&#10;&#10;Need to finish some parsing.">
       <option name="closed" value="true" />
@@ -151,7 +141,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720507755616</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Refactoring part 2&#10;&#10;- Rename `Name` to `DomainName`.&#10;- Move DomainName related parsing to `domain_name.rs`.&#10;- Entirely rewrite domain name parsing.&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`.&#10;- Add tracing_subscriber to rdig&#10;-">
+      <option name="closed" value="true" />
+      <created>1720679350188</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1720679350188</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -161,6 +159,7 @@
     <MESSAGE value="Initial Commit&#10;&#10;Mostly works in a way." />
     <MESSAGE value="Initial Commit&#10;&#10;Mostly works in a way.&#10;&#10;Need to finish some parsing." />
     <MESSAGE value="Start of refactor&#10;&#10;- Break up `header.rs` into smaller files.&#10;- Move header-related parsing into `header.rs`&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`." />
-    <option name="LAST_COMMIT_MESSAGE" value="Start of refactor&#10;&#10;- Break up `header.rs` into smaller files.&#10;- Move header-related parsing into `header.rs`&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`." />
+    <MESSAGE value="Refactoring part 2&#10;&#10;- Rename `Name` to `DomainName`.&#10;- Move DomainName related parsing to `domain_name.rs`.&#10;- Entirely rewrite domain name parsing.&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`.&#10;- Add tracing_subscriber to rdig&#10;-" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactoring part 2&#10;&#10;- Rename `Name` to `DomainName`.&#10;- Move DomainName related parsing to `domain_name.rs`.&#10;- Entirely rewrite domain name parsing.&#10;- Rename the cryptic `RCode` to the much more sensible `ReturnCode`.&#10;- Add tracing_subscriber to rdig&#10;-" />
   </component>
 </project>

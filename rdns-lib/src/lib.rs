@@ -8,7 +8,6 @@ use crate::resource_record::ResourceRecord;
 pub mod domain_name;
 mod error;
 pub mod header;
-mod parser;
 pub mod question;
 pub mod resource_record;
 
@@ -117,7 +116,7 @@ impl From<Message> for Vec<u8> {
 
 impl From<&[u8]> for Message {
     fn from(value: &[u8]) -> Self {
-        let (_, ret) = parser::parse_message(value).expect("Couldn't parse structure of message");
+        let (_, ret) = resource_record::parse(value).expect("Couldn't parse structure of message");
         ret
     }
 }

@@ -4,6 +4,7 @@ use std::net::Ipv4Addr;
 use nom::IResult;
 
 use crate::domain_name::DomainName;
+use crate::{header, question, Message};
 
 #[derive(Clone, Debug)]
 pub struct ResourceRecord {
@@ -521,4 +522,36 @@ pub fn parse_resource_record<'buf>(
             ResourceRecord::new(name, ty, class, ttl, record_data),
         ))
     }
+}
+
+#[tracing::instrument(skip_all)]
+pub(crate) fn parse(message: &[u8]) -> IResult<&[u8], Message> {
+    // Parse full header
+    let (remaining, header) = header::header_parser(message)?;
+    let (remaining, question_count) = nom::number::streaming::be_u16(remaining)?;
+    let (remaining, answer_count) = nom::number::streaming::be_u16(remaining)?;
+    let (remaining, nameserver_count) = nom::number::streaming::be_u16(remaining)?;
+    let (remaining, additional_record_count) = nom::number::streaming::be_u16(remaining)?;
+
+    let (remaining, questions) =
+        nom::multi::count(question::parse(message), question_count as usize)(remaining)?;
+    let (remaining, answers) =
+        nom::multi::count(parse_resource_record(message), answer_count as usize)(remaining)?;
+    let (remaining, authorities) =
+        nom::multi::count(parse_resource_record(message), nameserver_count as usize)(remaining)?;
+    let (remaining, additionals) = nom::multi::count(
+        parse_resource_record(message),
+        additional_record_count as usize,
+    )(remaining)?;
+
+    Ok((
+        remaining,
+        Message {
+            header,
+            questions,
+            answers,
+            authorities,
+            additionals,
+        },
+    ))
 }
