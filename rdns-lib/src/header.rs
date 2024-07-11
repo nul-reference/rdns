@@ -53,27 +53,6 @@ impl Header {
         )
     }
 
-    pub(crate) fn new_answer(
-        id: u16,
-        opcode: Opcode,
-        authoritive_answer: bool,
-        truncation: bool,
-        recursion_desired: bool,
-        recursion_available: bool,
-        return_code: ReturnCode,
-    ) -> Self {
-        Self::new(
-            Some(id),
-            false,
-            opcode,
-            authoritive_answer,
-            truncation,
-            recursion_desired,
-            recursion_available,
-            return_code,
-        )
-    }
-
     pub fn id(&self) -> u16 {
         self.id
     }

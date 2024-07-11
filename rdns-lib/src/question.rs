@@ -2,13 +2,17 @@ use std::fmt::Formatter;
 
 #[derive(Clone, Debug)]
 pub struct Question {
-    name: crate::name::Name,
+    name: crate::domain_name::DomainName,
     ty: super::Type,
     class: super::Class,
 }
 
 impl Question {
-    pub fn new(name: crate::name::Name, question_type: super::Type, class: super::Class) -> Self {
+    pub fn new(
+        name: crate::domain_name::DomainName,
+        question_type: super::Type,
+        class: super::Class,
+    ) -> Self {
         Self {
             name,
             ty: question_type,
@@ -16,7 +20,7 @@ impl Question {
         }
     }
 
-    pub fn name(&self) -> &crate::name::Name {
+    pub fn name(&self) -> &crate::domain_name::DomainName {
         &self.name
     }
 

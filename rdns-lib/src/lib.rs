@@ -1,11 +1,13 @@
-#![forbid(clippy::unwrap_used)]
 use std::fmt::Formatter;
+
+pub use error::Error;
 
 use crate::question::Question;
 use crate::resource_record::ResourceRecord;
 
+pub mod domain_name;
+mod error;
 pub mod header;
-pub mod name;
 mod parser;
 pub mod question;
 pub mod resource_record;
@@ -146,7 +148,7 @@ pub enum Type {
 }
 
 impl TryFrom<u16> for Type {
-    type Error = ConversionError;
+    type Error = Error;
 
     fn try_from(value: u16) -> Result<Self, Self::Error> {
         match value {
@@ -213,7 +215,7 @@ pub enum Class {
 }
 
 impl TryFrom<u16> for Class {
-    type Error = ConversionError;
+    type Error = Error;
 
     fn try_from(value: u16) -> Result<Self, Self::Error> {
         match value {
@@ -238,18 +240,3 @@ impl std::fmt::Display for Class {
         }
     }
 }
-
-#[derive(Debug)]
-pub enum ConversionError {
-    OutOfRange,
-}
-
-impl std::fmt::Display for ConversionError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ConversionError::OutOfRange => write!(f, "Out of range"),
-        }
-    }
-}
-
-impl std::error::Error for ConversionError {}

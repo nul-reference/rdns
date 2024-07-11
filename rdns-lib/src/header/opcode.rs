@@ -1,6 +1,6 @@
 use std::fmt::Formatter;
 
-use crate::ConversionError;
+use crate::error::Error;
 
 #[repr(u8)]
 #[derive(Copy, Clone, Debug)]
@@ -11,7 +11,7 @@ pub enum Opcode {
 }
 
 impl TryFrom<u8> for Opcode {
-    type Error = ConversionError;
+    type Error = Error;
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
             0 => Ok(Self::Query),
