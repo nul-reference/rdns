@@ -1,33 +1,34 @@
-use std::fmt::Formatter;
-
-use crate::error::Error;
-
 #[repr(u8)]
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, derive_more::Display)]
 pub enum Opcode {
+    #[display(fmt = "Query")]
     Query = 0,
+    #[display(fmt = "InverseQuery")]
     InverseQuery = 1,
+    #[display(fmt = "ServerStatusReport")]
     ServerStatusReport = 2,
+    #[display(fmt = "Unknown Opcode ({}/{:01x}", _0, _0)]
+    Unknown(u8),
 }
 
-impl TryFrom<u8> for Opcode {
-    type Error = Error;
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
+impl From<u8> for Opcode {
+    fn from(value: u8) -> Self {
         match value {
-            0 => Ok(Self::Query),
-            1 => Ok(Self::InverseQuery),
-            2 => Ok(Self::ServerStatusReport),
-            _ => Err(Self::Error::OutOfRange),
+            0 => Self::Query,
+            1 => Self::InverseQuery,
+            2 => Self::ServerStatusReport,
+            n => Self::Unknown(n),
         }
     }
 }
 
-impl std::fmt::Display for Opcode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Query => write!(f, "Query"),
-            Self::InverseQuery => write!(f, "Inverse Query"),
-            Self::ServerStatusReport => write!(f, "Server Status Report"),
+impl From<Opcode> for u8 {
+    fn from(value: Opcode) -> Self {
+        match value {
+            Opcode::Query => 0,
+            Opcode::InverseQuery => 1,
+            Opcode::ServerStatusReport => 2,
+            Opcode::Unknown(n) => n,
         }
     }
 }

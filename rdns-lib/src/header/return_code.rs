@@ -1,43 +1,46 @@
-use std::fmt::Formatter;
-
-use crate::error::Error;
-
 #[repr(u8)]
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, derive_more::Display)]
 pub enum ReturnCode {
+    #[display(fmt = "No Error")]
     NoError = 0,
+    #[display(fmt = "Format Error")]
     FormatError = 1,
+    #[display(fmt = "Server Failure")]
     ServerFailure = 2,
+    #[display(fmt = "Name Error")]
     NameError = 3,
+    #[display(fmt = "Not Implemented")]
     NotImplemented = 4,
+    #[display(fmt = "Refused")]
     Refused = 5,
+    #[display(fmt = "Unknown Return Code ({}/{:01x})", _0, _0)]
+    Unknown(u8),
 }
 
-impl TryFrom<u8> for ReturnCode {
-    type Error = Error;
-
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
+impl From<u8> for ReturnCode {
+    fn from(value: u8) -> Self {
         match value {
-            0 => Ok(Self::NoError),
-            1 => Ok(Self::FormatError),
-            2 => Ok(Self::ServerFailure),
-            3 => Ok(Self::NameError),
-            4 => Ok(Self::NotImplemented),
-            5 => Ok(Self::Refused),
-            _ => Err(Self::Error::OutOfRange),
+            0 => Self::NoError,
+            1 => Self::FormatError,
+            2 => Self::ServerFailure,
+            3 => Self::NameError,
+            4 => Self::NotImplemented,
+            5 => Self::Refused,
+            n => Self::Unknown(n),
         }
     }
 }
 
-impl std::fmt::Display for ReturnCode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::NoError => write!(f, "No Error"),
-            Self::FormatError => write!(f, "Format Error"),
-            Self::ServerFailure => write!(f, "Server Failure"),
-            Self::NameError => write!(f, "Name Error"),
-            Self::NotImplemented => write!(f, "Not Implemented"),
-            Self::Refused => write!(f, "Refused"),
+impl From<ReturnCode> for u8 {
+    fn from(value: ReturnCode) -> Self {
+        match value {
+            ReturnCode::NoError => 0,
+            ReturnCode::FormatError => 1,
+            ReturnCode::ServerFailure => 2,
+            ReturnCode::NameError => 3,
+            ReturnCode::NotImplemented => 4,
+            ReturnCode::Refused => 5,
+            ReturnCode::Unknown(n) => n,
         }
     }
 }

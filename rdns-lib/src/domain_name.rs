@@ -21,13 +21,10 @@ impl DomainName {
         full_message: &'m [u8],
     ) -> impl Fn(&'m [u8]) -> IResult<&'m [u8], Self, nom::error::Error<&[u8]>> {
         move |i: &'m [u8]| {
-            tracing::info!("Starting parsing DomainName");
             let (i, (labels, terminator)) = nom::multi::many_till(
                 Element::parse_label,
                 nom::branch::alt((Element::parse_root, Element::parse_pointer)),
             )(i)?;
-
-            tracing::info!("Parsed out {labels:?}");
 
             match terminator {
                 Element::Root => Ok((
@@ -103,14 +100,12 @@ impl Element {
     }
 
     fn parse_pointer(i: &[u8]) -> IResult<&[u8], Self> {
-        tracing::info!("Checking if pointer with input: {:02x?}", &i[..2]);
         let (i, (_, address)) = nom::bits::<_, (_, usize), nom::error::Error<(&[u8], usize)>, _, _>(
             nom::sequence::pair(
                 nom::bits::complete::tag(0x3, 2_usize),
                 nom::bits::complete::take(14_usize),
             ),
         )(i)?;
-        tracing::info!("Found pointer");
         Ok((i, Self::Pointer(address)))
     }
 }

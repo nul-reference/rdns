@@ -1,13 +1,13 @@
 use base64ct::{Base64, Encoding};
 
-use rdns_lib::Message;
+use rdns_lib::message::Message;
 
 fn main() {
     tracing_subscriber::fmt::init();
 
     let response = Base64::decode_vec("MRiBoAABAAIAAAAABnByb3RvbgJtZQAADwABwAwADwABAAACigAWAAoEbWFpbApwcm90b25tYWlsAmNoAMAMAA8AAQAAAooADAAUB21haWxzZWPALg==").unwrap();
 
-    let response_message = Message::from(&response[..]);
+    let response_message = Message::try_from(&response[..]).expect("Couldn't parse");
 
     if response_message.is_answer() {
         println!(

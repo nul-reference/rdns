@@ -111,9 +111,9 @@ fn parse_header_flags(input: &[u8]) -> HeaderFlags<'_> {
 pub fn header_parser(i: &[u8]) -> nom::IResult<&[u8], Header> {
     let (i, id) = nom::number::streaming::be_u16(i)?;
 
-    let (i, (qr, opcode, aa, tc, rd, ra, _zeros, rcode)) = parse_header_flags(i)?;
-    let opcode = Opcode::try_from(opcode).expect("Invalid opcode passed: {opcode:02X?}");
-    let return_code = ReturnCode::try_from(rcode).expect("Invalid rcode: {rcode:02X?}");
+    let (i, (qr, opcode, aa, tc, rd, ra, _zeros, return_code)) = parse_header_flags(i)?;
+    let opcode = Opcode::from(opcode);
+    let return_code = ReturnCode::from(return_code);
 
     Ok((
         i,
