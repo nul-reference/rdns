@@ -1,5 +1,8 @@
-use std::fmt::Formatter;
-use crate::ConversionError;
+pub use opcode::Opcode;
+pub use return_code::ReturnCode;
+
+mod opcode;
+mod return_code;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Header {
@@ -10,7 +13,7 @@ pub struct Header {
     truncation: bool,
     recursion_desired: bool,
     recursion_available: bool,
-    response_code: RCode,
+    response_code: ReturnCode,
 }
 
 impl Header {
@@ -23,7 +26,7 @@ impl Header {
         truncation: bool,
         recursion_desired: bool,
         recursion_available: bool,
-        response_code: RCode,
+        response_code: ReturnCode,
     ) -> Self {
         Self {
             id: id.unwrap_or_else(rand::random),
@@ -46,28 +49,7 @@ impl Header {
             false,
             recursion_desired,
             false,
-            RCode::NoError,
-        )
-    }
-
-    pub(crate) fn new_answer(
-        id: u16,
-        opcode: Opcode,
-        authoritive_answer: bool,
-        truncation: bool,
-        recursion_desired: bool,
-        recursion_available: bool,
-        return_code: RCode,
-    ) -> Self {
-        Self::new(
-            Some(id),
-            false,
-            opcode,
-            authoritive_answer,
-            truncation,
-            recursion_desired,
-            recursion_available,
-            return_code,
+            ReturnCode::NoError,
         )
     }
 
@@ -99,77 +81,42 @@ impl Header {
         self.recursion_available
     }
 
-    pub fn response_code(&self) -> RCode {
+    pub fn response_code(&self) -> ReturnCode {
         self.response_code
     }
 }
 
-#[repr(u8)]
-#[derive(Copy, Clone, Debug)]
-pub enum Opcode {
-    Query = 0,
-    InverseQuery = 1,
-    ServerStatusReport = 2,
+type HeaderFlags<'p> = nom::IResult<&'p [u8], (bool, u8, bool, bool, bool, bool, u8, u8)>;
+
+fn parse_header_flags(input: &[u8]) -> HeaderFlags<'_> {
+    use nom::bits::{
+        bits,
+        streaming::{bool, take},
+    };
+    use nom::sequence::tuple;
+
+    bits::<_, _, nom::error::Error<(&[u8], usize)>, _, _>(tuple((
+        bool,
+        take(4_usize),
+        bool,
+        bool,
+        bool,
+        bool,
+        take(3_usize),
+        take(4_usize),
+    )))(input)
 }
 
-impl TryFrom<u8> for Opcode {
-    type Error = ConversionError;
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match value {
-            0 => Ok(Self::Query),
-            1 => Ok(Self::InverseQuery),
-            2 => Ok(Self::ServerStatusReport),
-            _ => Err(Self::Error::OutOfRange),
-        }
-    }
-}
+#[tracing::instrument(skip_all)]
+pub fn header_parser(i: &[u8]) -> nom::IResult<&[u8], Header> {
+    let (i, id) = nom::number::streaming::be_u16(i)?;
 
-impl std::fmt::Display for Opcode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Query => write!(f, "Query"),
-            Self::InverseQuery => write!(f, "Inverse Query"),
-            Self::ServerStatusReport => write!(f, "Server Status Report"),
-        }
-    }
-}
+    let (i, (qr, opcode, aa, tc, rd, ra, _zeros, return_code)) = parse_header_flags(i)?;
+    let opcode = Opcode::from(opcode);
+    let return_code = ReturnCode::from(return_code);
 
-#[repr(u8)]
-#[derive(Copy, Clone, Debug)]
-pub enum RCode {
-    NoError = 0,
-    FormatError = 1,
-    ServerFailure = 2,
-    NameError = 3,
-    NotImplemented = 4,
-    Refused = 5,
-}
-
-impl TryFrom<u8> for RCode {
-    type Error = ConversionError;
-
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match value {
-            0 => Ok(Self::NoError),
-            1 => Ok(Self::FormatError),
-            2 => Ok(Self::ServerFailure),
-            3 => Ok(Self::NameError),
-            4 => Ok(Self::NotImplemented),
-            5 => Ok(Self::Refused),
-            _ => Err(Self::Error::OutOfRange),
-        }
-    }
-}
-
-impl std::fmt::Display for RCode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::NoError => write!(f, "No Error"),
-            Self::FormatError => write!(f, "Format Error"),
-            Self::ServerFailure => write!(f, "Server Failure"),
-            Self::NameError => write!(f, "Name Error"),
-            Self::NotImplemented => write!(f, "Not Implemented"),
-            Self::Refused => write!(f, "Refused"),
-        }
-    }
+    Ok((
+        i,
+        Header::new(Some(id), qr, opcode, aa, tc, rd, ra, return_code),
+    ))
 }
