@@ -2,8 +2,11 @@
 name = "rdig"
 version = "0.1.0"
 edition = "2021"
+description = "A simple command line tool for querying DNS servers."
 
 [dependencies]
 base64ct = { version = "1.6.0", features = ["alloc"] }
+derive_more = "0.99.18"
+clap = { version = "4.5.9", features = ["cargo", "derive"] }
 rdns-lib = { path = "../rdns-lib" }
 tracing-subscriber = "0.3.18"

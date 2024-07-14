@@ -1,5 +1,6 @@
 use std::fmt::{Display, Formatter};
 
+use itertools::Itertools;
 use nom::IResult;
 
 #[derive(Clone, Debug)]
@@ -69,6 +70,15 @@ impl From<DomainName> for Vec<u8> {
         }
         bytes.push(0);
         bytes
+    }
+}
+
+impl std::str::FromStr for DomainName {
+    type Err = std::convert::Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let labels = s.split('.').map(|s| s.to_owned()).collect_vec();
+        Ok(Self::new(labels))
     }
 }
 
